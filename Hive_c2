@@ -1,0 +1,52 @@
+#to create a database
+create database <database_name>  #pratap_hive_db_1
+
+scenerio 1:
+# Creating an internal hive table department_data in db pratap_hive_db_1 and this table will be loaded with department data.
+#department data is first placed in lfs and then will be moved to dfs and from dfs this table will be loaded
+
+create table department_data_from_hdfs (dept_id int,department_name string,manager_id int,salary int) row format delimited 
+fields terminated by ',';
+
+#load data from hdfs
+#once the file is loaded into internal hive tables the file will be removed from hdfs and will be moved to hive warehouse
+load data inpath "hdfs:///pratap_hive_files/admin_data_for_hive_practice.csv" into table department_data_from_hdfs;
+
+Querying the data:
+select * from department_data_from_hdfs;
+
+
+scenario 2:
+# Creating an internal hive table department_data in db pratap_hive_db_1 and this table will be loaded with department data directly from
+lfs location
+
+create table department_data (dept_id int,department_name string,manager_id int,salary int) row format delimited 
+fields terminated by ',';
+
+#load data from lfs,unlike when we load data from dfs the file will be taken to hive warehouse where as in case of external table and internal table where file will be loaded from lfs file wont be moved from source
+load data localdata inpath "file:///home/cloudera/hive_files/admin_data_for_hive_practice.csv" into table department_data;
+
+querying data:
+select * from department_data;
+
+
+scenario 3: external table 
+
+external tables will have only schema unlike internal tables where data is also present in hive warehouse and when internal table is
+is dropped table schema and data is also dropped but when external table is dropped only schema will be dropped
+
+create external table department_data_external_table (dept_id int,department_name string,manager_id int,salary int) row format delimited 
+fields terminated by ','  location '/pratap_hive_files/';
+
+for external tables we dont have to load data since it will refer to the file in the location given when ever a query is exeuted
+for suppose when 2 files with different datastructure/columns are placed in that location then the query will fail
+
+hadoop fs -put '/cloudera/hive_files/admin_data_for_hive_practice.csv' '/pratap_hive_files'
+
+scenario 4: working with array data
+
+create table array_table (id int,name string,skill array<string>) row format delimited fields terminated by ',' collection items terminated by '/';
+
+load data inpath 'hdfs:///pratap_hive_files/array_data.txt' into table pratap_hive_db_1.array_table;
+
+select * from array_table;
