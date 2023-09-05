@@ -1,1 +1,29 @@
-
+hive> create external table emp_delta_data_landing(
+    >  emp_id int,
+    >  emp_name string,
+    >  emp_salary int,
+    >  emp_location string)
+    >  row format delimited
+    >  fields terminated by ','
+    >  location '/hive_files_landing/emp'
+    >  tblproperties (
+    >  "skip.header.line.count"="1"
+    >  );
+OK
+Time taken: 0.201 seconds
+hive> select * from emp_delta_data_landing;
+OK
+1       pratap  1000    hyderabad
+2       reddy   2000    hyderabad
+3       sowmya  3000    hyderabad
+4       abhi    1000    banglore
+Time taken: 0.12 seconds, Fetched: 4 row(s)
+hive> set hive.cli.print.header = true;
+hive> select * from emp_delta_data_landing;
+OK
+emp_delta_data_landing.emp_id   emp_delta_data_landing.emp_name emp_delta_data_landing.emp_salary       emp_delta_data_landing.emp_location
+1       pratap  1000    hyderabad
+2       reddy   2000    hyderabad
+3       sowmya  3000    hyderabad
+4       abhi    1000    banglore
+Time taken: 0.122 seconds, Fetched: 4 row(s)
