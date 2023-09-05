@@ -1,1 +1,33 @@
+hadoop fs -put .ineuron_assignment_1/sales_order_data.csv /  #copying sales order data from lfs to hdfs
+
+hive> use pratap_hive_db_1;                 #create hive table to load sales order data
+OK
+Time taken: 0.099 seconds
+hive> create table sales_order_csv (
+    > ORDERNUMBER int,
+    > QUANTITYORDERED int,
+    > PRICEEACH double,
+    > ORDERLINENUMBER int,
+    > SALES double,
+    > STATUS string,
+    > QTR_ID smallint,
+    > MONTH_ID smallint,
+    > YEAR_ID smallint,
+    > PRODUCTLINE string,
+    > MSRP int,
+    > PRODUCTCODE string,
+    > PHONE bigint,
+    > CITY string,
+    > STATE string,
+    > POSTALCODE string,
+    > COUNTRY string,
+    > TERRITORY string,
+    > CONTACTLASTNAME string,
+    > CONTACTFIRSTNAME string,
+    > DEALSIZE string)
+    > row format delimited
+    > fields terminated by ','
+    > tblproperties("skip.header.line.count"="1");
+OK
+Time taken: 0.885 seconds
 
