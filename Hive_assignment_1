@@ -93,4 +93,12 @@ OK
 10211   41      100.0   14      4708.44 Shipped 1       1       2004    Motorcycles     95      S10_1678        NULLParis            75016   France  EMEA    Perrier Dominique       Medium
 Time taken: 0.285 seconds, Fetched: 10 row(s)
 
+# hive warehouse showing csv and orc files
+
+[cloudera@quickstart ~]$ hadoop fs -ls /user/hive/warehouse/pratap_hive_db_1.db/sales_order*
+Found 1 items
+-rwxrwxrwx   1 cloudera supergroup     360233 2023-09-05 03:22 /user/hive/warehouse/pratap_hive_db_1.db/sales_order_csv/sales_order_data.csv
+Found 1 items
+-rwxrwxrwx   1 cloudera supergroup      40172 2023-09-05 03:53 /user/hive/warehouse/pratap_hive_db_1.db/sales_order_orc/000000_0
+
 
