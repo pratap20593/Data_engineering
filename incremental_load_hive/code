@@ -27,3 +27,15 @@ emp_delta_data_landing.emp_id   emp_delta_data_landing.emp_name emp_delta_data_l
 3       sowmya  3000    hyderabad
 4       abhi    1000    banglore
 Time taken: 0.122 seconds, Fetched: 4 row(s)
+
+
+hive> create external table emp_delta_data_landing_to_parquet(
+    > emp_id int,
+    > emp_name string,
+    > emp_salary int,
+    > emp_location string)
+    > stored as parquet
+    > location '/hive_files_landing_to_parquet/emp';
+OK
+Time taken: 0.224 seconds
+hive> insert into table emp_delta_data_landing_to_parquet select * from emp_delta_data_landing;
