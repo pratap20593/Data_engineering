@@ -102,6 +102,12 @@ Found 1 items
 -rwxrwxrwx   1 cloudera supergroup      40172 2023-09-05 03:53 /user/hive/warehouse/pratap_hive_db_1.db/sales_order_orc/000000_0
 
 a. Calculatye total sales per year
+hive> select year_id as year,sum(sales) as total_sales from sales_order_orc group by year_id;
+year    total_sales
+2003    3516979.540000001
+2004    4724162.599999997
+2005    1791486.71
+
 
 b. Find a product for which maximum orders were placed
 c. Calculate the total sales for each quarter
