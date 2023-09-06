@@ -116,6 +116,19 @@ Classic Cars    S18_3232        1774
 
 
 c. Calculate the total sales for each quarter
+select qtr_id,year_id,sum(sales) as total_sales from sales_order_orc group by qtr_id,year_id;
+qtr_id  year_id total_sales
+1       2003    445094.6900000002
+1       2004    833730.6800000005
+1       2005    1071992.3600000003
+2       2003    562365.22
+2       2004    766260.7299999996
+2       2005    719494.3500000001
+3       2003    649514.5399999999
+3       2004    1109396.2700000005
+4       2003    1860005.0899999987
+4       2004    2014774.9199999995
+
 d. In which quarter sales was minimum
 e. In which country sales was maximum and in which country sales was minimum
 f. Calculate quartelry sales for each city
