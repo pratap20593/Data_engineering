@@ -144,4 +144,7 @@ USA     3627982.83
 
 
 f. Calculate quartelry sales for each city
+
+select qtr_id,year_id,city,sum(sales) as quarter_sales_city_wise from sales_order_orc group by qtr_id,year_id,city;
+
 h. Find a month for each year in which maximum number of quantities were sold
