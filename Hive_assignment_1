@@ -147,4 +147,13 @@ f. Calculate quartelry sales for each city
 
 select qtr_id,year_id,city,sum(sales) as quarter_sales_city_wise from sales_order_orc group by qtr_id,year_id,city;
 
-h. Find a month for each year in which maximum number of quantities were sold
+g. Find a month for each year in which maximum number of quantities were sold
+
+select t2.year_id,t2.month_id,t2.sold_quantity from (select t1.year_id,t1.month_id,t1.sold_quantity,dense_rank() over(partition by t1.year_id order by t1.sold_quantity desc) as dank from 
+(select year_id,month_id,sum(quantityordered) as sold_quantity from sales_order_orc group by month_id,year_id order by year_id,month_id) t1)t2 where t2.dank = 1;
+
+result:
+t2.year_id      t2.month_id     t2.sold_quantity
+2003    11      10179
+2004    11      10678
+2005    5       4357
