@@ -110,6 +110,11 @@ year    total_sales
 
 
 b. Find a product for which maximum orders were placed
+select productline,productcode,sum(quantityordered) as total_orders from sales_order_orc group by productline,productcode order by total_orders desc limit 1;
+productline     productcode     total_orders
+Classic Cars    S18_3232        1774
+
+
 c. Calculate the total sales for each quarter
 d. In which quarter sales was minimum
 e. In which country sales was maximum and in which country sales was minimum
