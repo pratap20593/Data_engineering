@@ -118,3 +118,25 @@ countrycode = 'USA'
 and 
 population >= 120000
 
+
+--q3--
+select * from city
+
+--q4--
+select * 
+from city
+where id = 1661;
+
+--q5--
+select id as city_id,
+       name as city_name,
+       countrycode,
+       district,
+       population
+from city
+where countrycode = 'JPN'
+
+--q6--
+select name as city_name
+from city
+where countrycode = 'JPN'
