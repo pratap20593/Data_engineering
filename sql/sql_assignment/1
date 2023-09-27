@@ -651,3 +651,24 @@ INSERT INTO station VALUES (249,'Acme','LA',73,67);
 INSERT INTO station VALUES (376,'Gorham','KS',111,64);
 INSERT INTO station VALUES (136,'Bass Harbor','ME',137,61);
 INSERT INTO station VALUES (455,'Granger','IA',33,102);
+
+
+--q7--
+
+select 
+    state,
+    city
+from station
+
+--q8--
+
+select distinct(city) 
+from station 
+where id%2 = 0
+
+--q9--
+select 
+count(city) 
+- 
+count(distinct(city))
+from station;
