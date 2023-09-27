@@ -100,3 +100,15 @@ insert into city values ('4061','Fall River','USA','Massachusetts','90555');
 
 
 select count(*) from city;
+
+
+--Q1--
+select * 
+from city 
+where 
+countrycode = 'USA' 
+and 
+population >= 100000
+
+
+
