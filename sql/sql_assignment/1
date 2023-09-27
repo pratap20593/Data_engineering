@@ -672,3 +672,28 @@ count(city)
 - 
 count(distinct(city))
 from station;
+
+--10--
+select city 
+from 
+  ((select city,
+        LENGTH(city) as city_length
+  from station 
+  ORDER BY city_length desc,city 
+  limit 1)
+  UNION
+  (select city,
+        LENGTH(city) as city_length
+  from station 
+  ORDER BY city_length,city 
+  limit 1)) temp_table
+
+  --11--
+  select distinct(city)
+  from station
+  where left(lower(city),1) in ('a','e','i','o','u');
+
+  --12--
+  select distinct(city)
+  from station
+  where right(lower(city),1) in ('a','e','i','o','u');
