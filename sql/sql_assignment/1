@@ -759,3 +759,25 @@ from (SELECT product_id
 INNER JOIN product p1
 on t1.product_id = p1.product_id
 
+--18--
+create table if NOT exists views(
+        article_id INT,
+        author_id  INT,
+        viewer_id  INT,
+        view_date DATE
+)
+
+INSERT INTO views VALUES(1, 3, 5, '2019-08-01');
+INSERT INTO views VALUES(1, 3, 6, '2019-08-02');
+INSERT INTO views VALUES(2, 7, 7, '2019-08-01');
+INSERT INTO views VALUES(2, 7, 6, '2019-08-02');
+INSERT INTO views VALUES(4, 7, 1, '2019-07-22');
+INSERT INTO views VALUES(3, 4, 4, '2019-07-21');
+INSERT INTO views VALUES(3, 4, 4, '2019-07-21');
+
+select * from views;
+
+select distinct(viewer_id)
+from views
+where author_id=viewer_id
+order by viewer_id
