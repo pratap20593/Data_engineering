@@ -863,3 +863,85 @@ select ad_id,
                 ELSE  clicked_count/(clicked_count + viewed_count)*100
         END,2) as ctr
 from tmp_table order BY ctr desc,ad_id
+
+--21--
+create table employee(
+        employee_id int,
+        team_id INt
+)
+
+drop table employee;
+INSERT INTO employee VALUES(1, 8);
+INSERT INTO employee VALUES(2, 8);
+INSERT INTO employee VALUES(3, 8);
+INSERT INTO employee VALUES(4, 7);
+INSERT INTO employee VALUES(5, 9);
+INSERT INTO employee VALUES(6, 9);
+
+select * from employee;
+
+select employee_id,
+        count (employee_id) over(PARTITION BY team_id) as team_size
+from employee order by employee_id;
+
+--22--
+
+create table countries(
+        country_id int,
+        country_name VARCHAR(10),
+        constraint cou_key PRIMARY KEY(country_id)
+);
+
+create table weather
+(
+        country_id int,
+        weather_state int,
+        day DATE,
+        constraint p_key primary KEY(country_id)
+) ;
+
+alter table weather add PRIMARY key(country_id,day);
+select * from countries;
+
+INSERT INTO countries VALUES(2, 'USA');
+INSERT INTO countries VALUES(3, 'Australia');
+INSERT INTO countries VALUES(7, 'Peru');
+INSERT INTO countries VALUES(5, 'China');
+INSERT INTO countries VALUES(8, 'Morocco');
+INSERT INTO countries VALUES(9, 'Spain');
+
+INSERT INTO weather VALUES(2, 15, '2019-11-01');
+INSERT INTO weather VALUES(2, 12, '2019-10-28');
+INSERT INTO weather VALUES(2, 12, '2019-10-27');
+INSERT INTO weather VALUES(3, -2, '2019-11-10');
+INSERT INTO weather VALUES(3, 0, '2019-11-11');
+INSERT INTO weather VALUES(3, 3, '2019-11-12');
+INSERT INTO weather VALUES(5, 16, '2019-11-07');
+INSERT INTO weather VALUES(5, 18, '2019-11-09');
+INSERT INTO weather VALUES(5, 21, '2019-11-23');
+INSERT INTO weather VALUES(7, 25 , '2019-11-28');
+INSERT INTO weather VALUES(7 , 22, '2019-12-01');
+INSERT INTO weather VALUES(7, 20, '2019-12-02');
+INSERT INTO weather VALUES(8, 25, '2019-11-05');
+INSERT INTO weather VALUES(8, 27, '2019-11-15');
+INSERT INTO weather VALUES(8, 31, '2019-11-25');
+INSERT INTO weather VALUES(9, 7, '2019-10-23');
+INSERT INTO weather VALUES(9, 3, '2019-12-23');
+
+select * from weather;
+
+select tmp.country_name,
+        CASE 
+                WHEN tmp.avt<=15 THEN 'cold'
+                WHEN tmp.avt>=25 THEN 'hot'
+                ELSE  'warm'
+        END as weather_type
+FROM
+(select co.country_name,
+        AVG(w.weather_state) as avt
+from weather w
+left join countries co
+on w.country_id = co.country_id
+where w.day between '2019-11-01' and '2019-11-30' 
+GROUP BY country_name) tmp 
+order by weather_type;
