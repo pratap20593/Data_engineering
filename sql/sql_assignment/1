@@ -781,3 +781,33 @@ select distinct(viewer_id)
 from views
 where author_id=viewer_id
 order by viewer_id
+
+--19--
+
+CREATE TABLE delivery
+(
+  delivery_id INT,
+  customer_id INT,
+  order_date DATE,
+  customer_pref_delivery_date DATE,
+  constraint p_delivery_id PRIMARY KEY(delivery_id)
+);
+
+
+INSERT INTO delivery VALUES(1, 1, '2019-08-01', '2019-08-02');
+INSERT INTO delivery VALUES(2, 5, '2019-08-02', '2019-08-02');
+INSERT INTO delivery VALUES(3, 1, '2019-08-11', '2019-08-11');
+INSERT INTO delivery VALUES(4, 3, '2019-08-24', '2019-08-26');
+INSERT INTO delivery VALUES(5, 4, '2019-08-21', '2019-08-22');
+INSERT INTO delivery VALUES(6, 2, '2019-08-11', '2019-08-13');
+
+select * from delivery
+
+SELECT round((
+        count(
+         case
+                when order_date = customer_pref_delivery_date 
+                then delivery_id
+         end
+) / count(*) * 100),2) as immediate_perc
+from delivery;
