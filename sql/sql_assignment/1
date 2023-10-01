@@ -811,3 +811,55 @@ SELECT round((
          end
 ) / count(*) * 100),2) as immediate_perc
 from delivery;
+
+
+--20--
+create table ads(
+        ad_id int,
+        user_id int,
+        action enum('Clicked', 'Viewed', 'Ignored') NOT NULL,
+        constraint p_key PRIMARY key(ad_id,user_id)
+)
+
+INSERT INTO ads VALUES(1, 1, 'Clicked');
+INSERT INTO ads VALUES(2, 2, 'Clicked');
+INSERT INTO ads VALUES(3, 3, 'Viewed');
+INSERT INTO ads VALUES(5, 5, 'Ignored');
+INSERT INTO ads VALUES(1, 7, 'Ignored');
+INSERT INTO ads VALUES(2, 7, 'Viewed');
+INSERT INTO ads VALUES(3, 5, 'Clicked');
+INSERT INTO ads VALUES(1, 4, 'Viewed');
+INSERT INTO ads VALUES(2, 11, 'Viewed');
+INSERT INTO ads VALUES(1, 2, 'Clicked');
+
+select * from ads;
+
+with tmp_table as(
+        select ad_id,
+                count(
+                        CASE 
+                                WHEN action = 'clicked' THEN  user_id
+                                
+                        END
+                ) as clicked_count,
+                count(
+                        CASE 
+                                WHEN action = 'viewed' THEN user_id 
+                        
+                        END
+                ) as viewed_count,
+                COUNT(
+                        CASE 
+                                WHEN action = 'ignored' THEN user_id 
+                        END
+                ) as  ignored_count
+        from ads 
+        group by ad_id
+        )
+select ad_id,
+        round(
+        CASE 
+                WHEN clicked_count + viewed_count = 0 THEN 0 
+                ELSE  clicked_count/(clicked_count + viewed_count)*100
+        END,2) as ctr
+from tmp_table order BY ctr desc,ad_id
