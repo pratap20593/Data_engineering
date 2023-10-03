@@ -1178,3 +1178,56 @@ select distinct(player_id),
         first_value (device_id) OVER(PARTITION BY player_id ORDER BY device_id) as devide_id_1
 from activity
 
+
+--26--
+CREATE TABLE products
+(
+  product_id INT,
+  product_name VARCHAR(30),
+  product_category VARCHAR(30),
+  CONSTRAINT pk_products PRIMARY KEY(product_id)
+);
+
+CREATE TABLE orders
+(
+  product_id INT,
+  order_date DATE,
+  unit INT,
+  CONSTRAINT fk_product FOREIGN KEY (product_id)
+    REFERENCES products(product_id) 
+);
+
+INSERT INTO products VALUES(1, 'Leetcode Solutions', 'Book');
+INSERT INTO products VALUES(2, 'Jewels of Stringology', 'Book');
+INSERT INTO products VALUES(3, 'HP', 'Laptop');
+INSERT INTO products VALUES(4, 'Lenovo', 'Laptop');
+INSERT INTO products VALUES(5, 'Leetcode Kit', 'T-shirt');
+
+INSERT INTO orders VALUES(1, '2020-02-05', 60);
+INSERT INTO orders VALUES(1, '2020-02-10', 70);
+INSERT INTO orders VALUES(2, '2020-01-18', 30);
+INSERT INTO orders VALUES(2, '2020-02-11' ,80);
+INSERT INTO orders VALUES(3, '2020-02-17', 2);
+INSERT INTO orders VALUES(3, '2020-02-24', 3);
+INSERT INTO orders VALUES(4, '2020-03-01', 20);
+INSERT INTO orders VALUES(4, '2020-03-04', 30);
+INSERT INTO orders VALUES(4, '2020-03-04', 60);
+INSERT INTO orders VALUES(5, '2020-02-25', 50);
+INSERT INTO orders VALUES(5, '2020-02-27', 50);
+INSERT INTO orders VALUES(5, '2020-03-01', 50);
+
+select
+    tmp.product_name,
+    tmp.total_units
+FROM (
+        select
+            pr.product_name,
+            sum(o.unit) as total_units
+        from orders o
+            left join products pr ON o.product_id = pr.product_id
+        where
+            YEAR(o.order_date) = 2020
+            and MONTH(o.order_date) = 02
+        GROUP BY pr.product_name
+    ) tmp
+where tmp.total_units >= 100
