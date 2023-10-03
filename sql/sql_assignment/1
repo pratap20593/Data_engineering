@@ -1089,3 +1089,92 @@ from units_sold u
     )
 GROUP BY u.product_id
 
+--23--
+CREATE TABLE prices
+(
+  product_id INT,
+  start_date DATE,
+  end_date DATE,
+  price INT,
+  CONSTRAINT pk_prices PRIMARY KEY(product_id, start_date, end_date)
+);
+
+CREATE TABLE units_sold
+(
+  product_id INT,
+  purchase_date DATE,
+  units INT
+);
+
+INSERT INTO prices VALUES(1, '2019-02-17', '2019-02-28', 5);
+INSERT INTO prices VALUES(1, '2019-03-01', '2019-03-22', 20);
+INSERT INTO prices VALUES(2, '2019-02-01', '2019-02-20', 15);
+INSERT INTO prices VALUES(2, '2019-02-21', '2019-03-31', 30);
+
+INSERT INTO units_sold VALUES(1, '2019-02-25', 100);
+INSERT INTO units_sold VALUES(1, '2019-03-01', 15);
+INSERT INTO units_sold VALUES(2, '2019-02-10', 200);
+INSERT INTO units_sold VALUES(2, '2019-03-22', 30);
+
+
+select
+    product_id,
+    round(sum(avg_cost), 2) as avg_price
+from (
+        select
+            tmp.product_id,
+            tmp.total_price / tmp.total_units as avg_cost
+        from (
+                SELECT
+                    u.product_id,
+                    pr.price, (u.units * pr.price) as total_price,
+                    sum(units) OVER (PARTITION BY u.product_id) as total_units
+                from
+                    units_sold u
+                    left join prices pr on (u.product_id = pr.product_id)
+                    and (
+                        u.purchase_date BETWEEN pr.start_date
+                        and pr.end_date
+                    )
+            ) tmp
+    ) tmp1
+GROUP BY product_id
+
+--23-- referred
+SELECT
+    u.product_id,
+    SUM(u.units * pr.price) / sum(u.units) as total_price
+from units_sold u
+    left join prices pr on (u.product_id = pr.product_id) and (
+        u.purchase_date BETWEEN pr.start_date and pr.end_date
+    )
+GROUP BY u.product_id
+
+--24--
+
+CREATE TABLE activity
+(
+  player_id INT,
+  device_id INT,
+  event_date DATE,
+  games_played INT,
+  CONSTRAINT pk_activity PRIMARY KEY(player_id, event_date)
+);
+
+INSERT INTO activity VALUES(1, 2, '2016-03-01', 5);
+INSERT INTO activity VALUES(1, 2, '2016-05-02', 6);
+INSERT INTO activity VALUES(2, 3, '2017-06-25', 1);
+INSERT INTO activity VALUES(3, 1, '2016-03-02', 0);
+INSERT INTO activity VALUES(3, 4, '2018-07-03', 5);
+
+SELECT player_id,
+       MIN(event_date) 
+from activity 
+GROUP BY player_id 
+
+--25--
+select distinct(player_id),
+        -- min(device_id) as device_id,
+        first_value (device_id) OVER(PARTITION BY player_id ORDER BY device_id) as devide_id_1
+from activity
+
