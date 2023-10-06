@@ -1231,3 +1231,659 @@ FROM (
         GROUP BY pr.product_name
     ) tmp
 where tmp.total_units >= 100
+
+--27--
+
+CREATE TABLE users
+(
+  user_id INT,
+  name VARCHAR(30),
+  mail VARCHAR(50),
+  CONSTRAINT pk_users PRIMARY KEY(user_id)
+);
+
+truncate  users;
+
+INSERT INTO users VALUES(1, 'Winston', 'winston@leetcode.com');
+INSERT INTO users VALUES(2, 'Jonathan', 'jonathanisgreat');
+INSERT INTO users VALUES(3, 'Annabelle', 'bella-@leetcode.com');
+INSERT INTO users VALUES(4, 'Sally', 'sally.come@leetcode.com');
+INSERT INTO users VALUES(5, 'Marwan', 'quarz#2020@leetcode.com');
+INSERT INTO users VALUES(6, 'David', 'david69@gmail.com');
+INSERT INTO users VALUES(7, 'Shapiro','.shapo@leetcode.com');
+
+select *
+from users
+where mail REGEXP '^[a-zA-z][a-zA-Z0-9\_\.\-]*@leetcode.com'
+
+--28--
+
+CREATE TABLE customers
+(
+  customer_id INT,
+  name VARCHAR(30),
+  country VARCHAR(50),
+  CONSTRAINT pk_customers PRIMARY KEY(customer_id)
+);
+
+
+CREATE TABLE products
+(
+  product_id INT,
+  name VARCHAR(30),
+  price VARCHAR(50),
+  CONSTRAINT pk_products PRIMARY KEY(product_id)
+);
+
+CREATE TABLE orders
+(
+  order_id INT,
+  customer_id INT,
+  product_id INT,
+  order_date DATE,
+  quantity INT,
+  CONSTRAINT pk_orders PRIMARY KEY(order_id)
+);
+
+
+INSERT INTO customers VALUES(1, 'Winston', 'USA');
+INSERT INTO customers VALUES(2, 'Jonathan', 'Peru');
+INSERT INTO customers VALUES(3, 'Moustafa', 'Egypt');
+
+INSERT INTO products VALUES(10, 'LC Phone', 300);
+INSERT INTO products VALUES(20, 'LC T-Shirt', 10);
+INSERT INTO products VALUES(30, 'LC Book', 45);
+INSERT INTO products VALUES(40, 'LC Keychain', 2);
+
+
+INSERT INTO orders VALUES(1, 1, 10, '2020-06-10', 1);
+INSERT INTO orders VALUES(2, 1, 20, '2020-07-01', 1);
+INSERT INTO orders VALUES(3, 1, 30, '2020-07-08', 2);
+INSERT INTO orders VALUES(4, 2, 10, '2020-06-15', 2);
+INSERT INTO orders VALUES(5, 2, 40, '2020-07-01', 10);
+INSERT INTO orders VALUES(6, 3, 20, '2020-06-24', 2);
+INSERT INTO orders VALUES(7, 3, 30, '2020-06-25', 2);
+INSERT INTO orders VALUES(9, 3, 30, '2020-05-08', 3);
+
+
+select
+    o.customer_id,
+    cu.name,
+    o.order_date
+    --     sum(o.quantity * pr.price) as total
+from orders o
+    left join products pr on o.product_id = pr.product_id
+    left join customers cu on o.customer_id = cu.customer_id 
+GROUP BY
+    o.customer_id,o.order_date
+having
+    sum (
+            CASE
+                WHEN month(o.order_date) = 06 THEN (o.quantity * pr.price)
+                ELSE 0
+            END
+        ) >=100
+        AND (
+            CASE
+                WHEN month(o.order_date) = 07 THEN (o.quantity * pr.price)
+                ELSE 0
+            END
+        )>=100
+    
+
+
+--29--
+
+CREATE TABLE tv_program
+(
+  program_date DATE,
+  content_id INT,
+  channel VARCHAR(30),
+  CONSTRAINT pk_tv_program PRIMARY KEY(program_date, content_id)
+);
+drop TABLE content
+
+CREATE TABLE content_
+(
+  content_id INT,
+  title VARCHAR(50),
+  kids_content ENUM('Y', 'N'),
+  content_type VARCHAR(20),
+  CONSTRAINT pk_content PRIMARY KEY(content_id)
+);
+
+INSERT INTO tv_program VALUES('2020-06-10 08:00', 1, 'LC-Channel');
+INSERT INTO tv_program VALUES('2020-05-11 12:00', 2, 'LC-Channel');
+INSERT INTO tv_program VALUES('2020-05-12 12:00', 3, 'LC-Channel');
+INSERT INTO tv_program VALUES('2020-05-13 14:00', 4, 'Disney Ch');
+INSERT INTO tv_program VALUES('2020-06-18 14:00', 4, 'Disney Ch');
+INSERT INTO tv_program VALUES('2020-07-15 16:00', 5, 'Disney Ch');
+
+INSERT INTO content_ VALUES(1, 'Leetcode Movie', 'N', 'Movies');
+INSERT INTO content_ VALUES(2, 'Alg. for Kids', 'Y', 'Series');
+INSERT INTO content_ VALUES(3, 'Database Sols', 'N', 'Series');
+INSERT INTO content_ VALUES(4, 'Aladdin', 'Y', 'Movies');
+INSERT INTO content_ VALUES(5, 'Cinderella', 'Y', 'Movies');
+
+
+select co.title
+from tv_program tv
+left join content_ co
+on tv.content_id = co.content_id
+where MONTH(tv.program_date) = 06 and co.kids_content = 'Y' and co.content_type = 'Movies'
+
+--30--
+CREATE TABLE npv
+(
+  id INT,
+  year INT,
+  npv INT,
+  CONSTRAINT pk_npv PRIMARY KEY(id, year)
+);
+
+CREATE TABLE queries
+(
+  id INT,
+  year INT,
+  CONSTRAINT pk_quereis PRIMARY KEY(id,year)
+);
+
+INSERT INTO npv VALUES(1, 2018, 100);
+INSERT INTO npv VALUES(7, 2020, 30);
+INSERT INTO npv VALUES(13, 2019, 40);
+INSERT INTO npv VALUES(1, 2019, 113);
+INSERT INTO npv VALUES(2, 2008, 121);
+INSERT INTO npv VALUES(3, 2009, 12);
+INSERT INTO npv VALUES(11, 2020, 99);
+INSERT INTO npv VALUES(7, 2019, 0);
+
+INSERT INTO queries VALUES(1, 2019);
+INSERT INTO queries VALUES(2, 2008);
+INSERT INTO queries VALUES(3, 2009);
+INSERT INTO queries VALUES(7, 2018);
+INSERT INTO queries VALUES(7, 2019);
+INSERT INTO queries VALUES(7, 2020);
+INSERT INTO queries VALUES(13, 2019);
+
+select q.*,
+        ifnull (n.npv,0) as npv
+from queries q
+left join npv n
+on q.id = n.id and q.year = n.year
+
+--31--
+
+duplicate question of --30--
+
+--32--
+CREATE TABLE employees
+(
+  id INT,
+  name VARCHAR(30),
+  CONSTRAINT pk_employees PRIMARY KEY(id)
+);
+
+CREATE TABLE employee_uni
+(
+  id INT,
+  unique_id INT,
+  CONSTRAINT pk_employee_uni PRIMARY KEY(id, unique_id)
+);
+
+
+INSERT INTO employees VALUES(1, 'Alice');
+INSERT INTO employees VALUES(7, 'Bob');
+INSERT INTO employees VALUES(11, 'Meir');
+INSERT INTO employees VALUES(90, 'Winston');
+INSERT INTO employees VALUES(3, 'Jonathan');
+
+INSERT INTO employee_uni VALUES(3, 1);
+INSERT INTO employee_uni VALUES(11, 2);
+INSERT INTO employee_uni VALUES(90, 3);
+
+SELECT e.name,em.unique_id
+from employees e
+left join employee_uni em
+on e.id = em.id
+ORDER BY e.name;
+
+
+--33--
+CREATE TABLE users
+(
+  id INT,
+  name VARCHAR(30),
+  CONSTRAINT pk_users PRIMARY KEY(id)
+);
+
+CREATE TABLE rides
+(
+  id INT,
+  user_id INT,
+  distance INT,
+  CONSTRAINT pk_rides PRIMARY KEY(id)
+);
+
+
+
+INSERT INTO users VALUES(1, 'Alice');
+INSERT INTO users VALUES(2, 'Bob');
+INSERT INTO users VALUES(3, 'Alex');
+INSERT INTO users VALUES(4, 'Donald');
+INSERT INTO users VALUES(7, 'Lee');
+INSERT INTO users VALUES(13, 'Jonathan'); 
+INSERT INTO users VALUES(19, 'Elvis');
+
+INSERT INTO rides VALUES(1, 1, 120);
+INSERT INTO rides VALUES(2, 2, 317);
+INSERT INTO rides VALUES(3, 3, 222);
+INSERT INTO rides VALUES(4, 7, 100);
+INSERT INTO rides VALUES(5, 13, 312);
+INSERT INTO rides VALUES(6, 19, 50);
+INSERT INTO rides VALUES(7, 7, 120);
+INSERT INTO rides VALUES(8, 19, 400);
+INSERT INTO rides VALUES(9, 7, 230);
+
+select u.name,
+        sum(CASE 
+                WHEN r.distance is null THEN 0 
+                ELSE r.distance 
+        END) as total_distance
+from users u
+left join rides r
+on u.id = r.user_id
+group by u.name
+order by total_distance desc,u.name;
+
+drop table users;
+
+drop table rides;
+
+drop table products;
+drop table orders;
+--34--
+CREATE TABLE products
+(
+  product_id INT,
+  product_name VARCHAR(30),
+  product_category VARCHAR(30),
+  CONSTRAINT pk_products PRIMARY KEY(product_id)
+);
+
+CREATE TABLE orders
+(
+  product_id INT,
+  order_date DATE,
+  unit INT,
+  CONSTRAINT fk_product FOREIGN KEY (product_id)
+    REFERENCES products(product_id) 
+);
+
+INSERT INTO products VALUES(1, 'Leetcode Solutions', 'Book');
+INSERT INTO products VALUES(2, 'Jewels of Stringology', 'Book');
+INSERT INTO products VALUES(3, 'HP', 'Laptop');
+INSERT INTO products VALUES(4, 'Lenovo', 'Laptop');
+INSERT INTO products VALUES(5, 'Leetcode Kit', 'T-shirt');
+
+INSERT INTO orders VALUES(1, '2020-02-05', 60);
+INSERT INTO orders VALUES(1, '2020-02-10', 70);
+INSERT INTO orders VALUES(2, '2020-01-18', 30);
+INSERT INTO orders VALUES(2, '2020-02-11' ,80);
+INSERT INTO orders VALUES(3, '2020-02-17', 2);
+INSERT INTO orders VALUES(3, '2020-02-24', 3);
+INSERT INTO orders VALUES(4, '2020-03-01', 20);
+INSERT INTO orders VALUES(4, '2020-03-04', 30);
+INSERT INTO orders VALUES(4, '2020-03-04', 60);
+INSERT INTO orders VALUES(5, '2020-02-25', 50);
+INSERT INTO orders VALUES(5, '2020-02-27', 50);
+INSERT INTO orders VALUES(5, '2020-03-01', 50);
+
+SELECT pr.product_name
+FROM orders o
+left join products pr
+on o.product_id = pr.product_id
+where o.order_date like '2020-02%'
+GROUP BY o.product_id
+HAVING sum(o.unit) >= 100
+
+DROP TABLE orders;
+DROP TABLE products;
+
+drop table users;
+--35--
+CREATE TABLE movies
+(
+  movie_id INT,
+  title VARCHAR(25),
+  CONSTRAINT pk_movies PRIMARY KEY(movie_id)
+);
+
+CREATE TABLE users
+(
+  user_id INT,
+  name VARCHAR(25),
+  CONSTRAINT pk_users PRIMARY KEY(user_id)
+);
+
+CREATE TABLE movie_rating
+(
+  movie_id INT,
+  user_id INT,
+  rating INT,
+  created_at DATE,
+  CONSTRAINT pk_movie_rating PRIMARY KEY(movie_id, user_id)
+);
+
+INSERT INTO movies VALUES(1, 'Avengers');
+INSERT INTO movies VALUES(2, 'Frozen 2');
+INSERT INTO movies VALUES(3, 'Joker');
+
+INSERT INTO users VALUES(1, 'Daniel');
+INSERT INTO users VALUES(2, 'Monica');
+INSERT INTO users VALUES(3, 'Maria');
+INSERT INTO users VALUES(4, 'James');
+
+INSERT INTO movie_rating VALUES(1, 1, 3, '2020-01-12');
+INSERT INTO movie_rating VALUES(1, 2, 4, '2020-02-11');
+INSERT INTO movie_rating VALUES(1, 3, 2, '2020-02-12');
+INSERT INTO movie_rating VALUES(1, 4, 1, '2020-01-01');
+INSERT INTO movie_rating VALUES(2, 1, 5, '2020-02-17');
+INSERT INTO movie_rating VALUES(2, 2, 2, '2020-02-01');
+INSERT INTO movie_rating VALUES(2, 3, 2, '2020-03-01');
+INSERT INTO movie_rating VALUES(3, 1, 3, '2020-02-22');
+INSERT INTO movie_rating VALUES(3, 2, 4, '2020-02-25');
+
+(
+    SELECT u.name
+    from movie_rating mo
+        LEFT join users u on mo.user_id = u.user_id
+    GROUP BY u.name
+    ORDER BY
+        count(mo.user_id) desc,
+        u.name
+    limit 1
+)
+UNION (
+    SELECT mov.title
+    from movie_rating mo
+        LEFT join movies mov on mo.movie_id = mov.movie_id
+    where
+        mo.created_at like '2020-02%'
+    GROUP BY mo.movie_id
+    ORDER BY
+        avg(mo.rating) desc,
+        mov.title
+    limit 1
+);
+drop table movie_rating;
+drop table movies;
+drop table users
+
+drop table rides;
+
+--36--
+duplicate to 33
+
+--37--
+duplicate to 32
+
+--38--
+CREATE TABLE departments
+(
+  id INT,
+  name VARCHAR(30),
+  CONSTRAINT pk_department PRIMARY KEY(id)
+);
+
+CREATE TABLE students
+(
+  id INT,
+  name VARCHAR(30),
+  department_id INT,
+  CONSTRAINT pk_students PRIMARY KEY(id)
+);
+
+
+INSERT INTO departments VALUES(1, 'Electrical Engineering');
+INSERT INTO departments VALUES(7, 'Computer Engineering');
+INSERT INTO departments VALUES(13, 'Business Administration');
+
+INSERT INTO students VALUES(23, 'Alice', 1);
+INSERT INTO students VALUES(1, 'Bob', 7);
+INSERT INTO students VALUES(5, 'Jennifer', 13);
+INSERT INTO students VALUES(2, 'John', 14);
+INSERT INTO students VALUES(4, 'Jasmine', 77);
+INSERT INTO students VALUES(3, 'Steve', 74);
+INSERT INTO students VALUES(6, 'Luis', 1);
+INSERT INTO students VALUES(8, 'Jonathan', 7);
+INSERT INTO students VALUES(7, 'Daiana', 33);
+INSERT INTO students VALUES(11, 'Madelynn', 1);
+
+select s.id,
+        s.name
+from students s
+left join departments d
+on s.department_id = d.id
+where s.department_id not in (select DISTINCT(id) from departments)
+
+--39--
+
+CREATE TABLE calls
+(
+  from_id INT,
+  to_id INT,
+  duration INT
+);
+
+INSERT INTO calls VALUES(1, 2, 59);
+INSERT INTO calls VALUES(2, 1, 11);
+INSERT INTO calls VALUES(1, 3, 20);
+INSERT INTO calls VALUES(3, 4, 100);
+INSERT INTO calls VALUES(3, 4, 200);
+INSERT INTO calls VALUES(3, 4, 200);
+INSERT INTO calls VALUES(4, 3, 499);
+
+SELECT 
+CASE 
+        WHEN from_id < to_id THEN  from_id
+        ELSE  to_id
+END as person_1,
+CASE 
+        WHEN from_id < to_id THEN  to_id
+        ELSE  from_id
+END as person_2,
+count(*) as call_count,
+sum(duration) as total_call_duration
+from calls
+GROUP BY person_1,person_2;
+
+--40--
+CREATE TABLE prices
+(
+  product_id INT,
+  start_date DATE,
+  end_date DATE,
+  price INT,
+  CONSTRAINT pk_prices PRIMARY KEY(product_id, start_date, end_date)
+);
+
+CREATE TABLE units_sold
+(
+  product_id INT,
+  purchase_date DATE,
+  units INT
+);
+
+INSERT INTO prices VALUES(1, '2019-02-17', '2019-02-28', 5);
+INSERT INTO prices VALUES(1, '2019-03-01', '2019-03-22', 20);
+INSERT INTO prices VALUES(2, '2019-02-01', '2019-02-20', 15);
+INSERT INTO prices VALUES(2, '2019-02-21', '2019-03-31', 30);
+
+INSERT INTO units_sold VALUES(1, '2019-02-25', 100);
+INSERT INTO units_sold VALUES(1, '2019-03-01', 15);
+INSERT INTO units_sold VALUES(2, '2019-02-10', 200);
+INSERT INTO units_sold VALUES(2, '2019-03-22', 30);
+
+select u.product_id,
+       round(SUM(u.units * pr.price)/sum(u.units),2) as avg_price
+from units_sold u
+left join prices pr
+on u.product_id = pr.product_id
+where u.purchase_date BETWEEN pr.start_date and pr.end_date
+GROUP BY u.product_id;
+
+drop table prices;
+drop table units_sold;
+--41--
+CREATE TABLE warehouse
+(
+  name VARCHAR(30),
+  product_id INT,
+  units INT,
+  CONSTRAINT pk_warehouse PRIMARY KEY(name, product_id)
+);
+
+CREATE TABLE products
+(
+  product_id INT,
+  product_name VARCHAR(30),
+  width INT,
+  length INT,
+  height INT,
+  CONSTRAINT pk_products PRIMARY KEY(product_id)
+);
+
+INSERT INTO warehouse VALUES('LCHouse1', 1, 1);
+INSERT INTO warehouse VALUES('LCHouse1', 2, 10);
+INSERT INTO warehouse VALUES('LCHouse1', 3, 5);
+INSERT INTO warehouse VALUES('LCHouse2', 1, 2);
+INSERT INTO warehouse VALUES('LCHouse2', 2, 2);
+INSERT INTO warehouse VALUES('LCHouse3', 4, 1);
+
+INSERT INTO products VALUES(1, 'LC-TV', 5, 50, 40);
+INSERT INTO products VALUES(2, 'LC-KeyChain', 5, 5, 5);
+INSERT INTO products VALUES(3, 'LC-Phone', 2, 10, 10);
+INSERT INTO products VALUES(4, 'LC-T-Shirt', 4, 10, 20);
+
+SELECT w.name,
+       sum(w.units*pr.width*pr.length*pr.height) as total_volume
+from warehouse w
+left join products pr
+on w.product_id = pr.product_id
+GROUP BY w.name;
+DROP TABLE warehouse;
+DROP TABLE products;
+
+--42--
+CREATE TABLE sales
+(
+  sale_date DATE,
+  fruit VARCHAR(10),
+  sold_num INT,
+  CONSTRAINT pk_sales PRIMARY KEY(sale_date, fruit)
+);
+
+INSERT INTO sales VALUES('2020-05-01', 'apples', 10);
+INSERT INTO sales VALUES('2020-05-01', 'oranges', 8);
+INSERT INTO sales VALUES('2020-05-02', 'apples', 15);
+INSERT INTO sales VALUES('2020-05-02', 'oranges', 15);
+INSERT INTO sales VALUES('2020-05-03', 'apples', 20);
+INSERT INTO sales VALUES('2020-05-03', 'oranges', 0);
+INSERT INTO sales VALUES('2020-05-04', 'apples', 15);
+INSERT INTO sales VALUES('2020-05-04', 'oranges', 16);
+
+
+select
+    sale_date,
+    sum(
+        CASE 
+                WHEN fruit = 'apples' THEN sold_num 
+                when fruit = 'oranges' THEN (-1)*sold_num
+        END
+    ) as sold_num_updated
+from sales
+GROUP BY sale_date;
+
+
+--43--
+CREATE TABLE activity
+(
+  player_id INT,
+  device_id INT,
+  event_date DATE,
+  games_played INT,
+  CONSTRAINT pk_activity PRIMARY KEY(player_id, event_date)
+);
+
+INSERT INTO activity VALUES(1, 2, '2016-03-01', 5);
+INSERT INTO activity VALUES(1 ,2, '2016-03-02', 6);
+INSERT INTO activity VALUES(2, 3, '2017-06-25', 1);
+INSERT INTO activity VALUES(3, 1, '2016-03-02', 0);
+INSERT INTO activity VALUES(3, 4, '2018-07-03', 5);
+
+select player_id,
+        event_date,
+        CASE 
+                WHEN  THEN  
+                ELSE  
+        END
+
+--44--
+CREATE TABLE employee
+(
+  id INT,
+  name VARCHAR(30),
+  department VARCHAR(30),
+  manager_id INT,
+  CONSTRAINT pk_employee PRIMARY KEY(id)
+);
+
+INSERT INTO employee VALUES(101, 'John', 'A', null);
+INSERT INTO employee VALUES(102, 'Dan', 'A', 101);
+INSERT INTO employee VALUES(103, 'James', 'A', 101);
+INSERT INTO employee VALUES(104, 'Amy', 'A', 101);
+INSERT INTO employee VALUES(105, 'Anne', 'A', 101);
+INSERT INTO employee VALUES(106, 'Ron', 'B', 101);
+
+select e1.name
+from employee e1
+JOIN
+(SELECT manager_id
+	FROM employee
+	GROUP BY manager_id
+	HAVING COUNT(manager_id) >= 5) tmp
+  on e1.id = tmp.manager_id
+
+--45--
+CREATE TABLE department
+(
+  dept_id INT,
+  dept_name VARCHAR(30),
+  CONSTRAINT pk_department PRIMARY KEY(dept_id)
+);
+
+CREATE TABLE student
+(
+  student_id INT,
+  student_name VARCHAR(30),
+  gender VARCHAR(1),
+  dept_id INT,
+  CONSTRAINT pk_student PRIMARY KEY(student_id),
+  CONSTRAINT fk_department FOREIGN KEY (dept_id)
+    REFERENCES department(dept_id) 
+);
+
+INSERT INTO department VALUES(1, 'Engineering');
+INSERT INTO department VALUES(2, 'Science');
+INSERT INTO department VALUES(3, 'Law');
+
+INSERT INTO student VALUES(1, 'Jack', 'M', 1);
+INSERT INTO student VALUES(2, 'Jane', 'F', 1);
+INSERT INTO student VALUES(3, 'Mark', 'M', 2);
+
+SELECT d.dept_name,
+        count(s.student_id)
+from department d
+left join student s
+on d.dept_id = s.dept_id
+GROUP BY d.dept_name
