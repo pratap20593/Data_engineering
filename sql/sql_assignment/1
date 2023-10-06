@@ -1882,7 +1882,7 @@ INSERT INTO student VALUES(2, 'Jane', 'F', 1);
 INSERT INTO student VALUES(3, 'Mark', 'M', 2);
 
 SELECT d.dept_name,
-        count(s.student_id)
+        count(s.student_id) as student_count
 from department d
 left join student s
 on d.dept_id = s.dept_id
